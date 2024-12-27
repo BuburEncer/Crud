@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daftar Produk</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/css/bootstrap.min.css" />
+  </head>
+  <body>
+    <div class="container mt-5">
+      <h2>Daftar Produk</h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nama</th>
+            <th>Deskripsi</th>
+            <th>Harga</th>
+            <th>Kondisi</th>
+            <th>Status</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="productTableBody">
+          <!-- Produk akan ditambahkan di sini -->
+        </tbody>
+      </table>
+      <a href="/input" class="btn btn-primary">Tambah Produk</a>
+    </div>
+
+    <script>
+      // Fungsi untuk mengambil dan menampilkan produk
+      function fetchProducts() {
+        fetch("/products")
+          .then((response) => response.json())
+          .then((products) => {
+            const productTableBody = document.getElementById("productTableBody");
+            productTableBody.innerHTML = ""; // Kosongkan tabel sebelum menambahkan produk baru
+            products.forEach((product) => {
+              const row = document.createElement("tr");
+              row.innerHTML = `
+                            <td>${product.id}</td>
+                            <td>${product.name}</td>
+                            <td>${product.description}</td>
+                            <td>${product.price}</td>
+                            <td>${product.product_condition}</td>
+                            <td>${product.status}</td>
+                            <td>
+                                <button class="btn btn-danger" onclick="deleteProduct(${product.id})">Delete</button>
+                            </td>
+                        `;
+              productTableBody.appendChild(row);
+            });
+          })
+          .catch((error) => console.error("Error fetching products:", error));
+      }
+
+      // Fungsi untuk menghapus produk
+      function deleteProduct(id) {
+        if (confirm("Apakah Anda yakin ingin menghapus produk ini?")) {
+          fetch(`/products/${id}`, {
+            method: "DELETE",
+          })
+            .then((response) => {
+              if (response.ok) {
+                alert("Produk berhasil dihapus.");
+                fetchProducts(); // Refresh daftar produk
+              } else {
+                alert("Terjadi kesalahan saat menghapus produk.");
+              }
+            })
+            .catch((error) => console.error("Error deleting product:", error));
+        }
+      }
+
+      // Ambil produk saat halaman dimuat
+      window.onload = fetchProducts;
+    </script>
+  </body>
+</html>

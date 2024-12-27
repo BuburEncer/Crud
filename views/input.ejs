@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Input Data Produk</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/views/style.css" />
+  </head>
+  <body>
+    <div class="container mt-5">
+      <h2>Input Data Produk</h2>
+      <form id="productForm">
+        <div class="form-group">
+          <label for="name">Nama Produk</label>
+          <input type="text" class="form-control" id="name" required />
+        </div>
+        <div class="form-group">
+          <label for="description">Deskripsi</label>
+          <textarea class="form-control" id="description" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="price">Harga</label>
+          <input type="number" class="form-control" id="price" step="0.01" required />
+        </div>
+        <div class="form-group">
+          <label for="product_condition">Kondisi</label>
+          <input type="text" class="form-control" id="product_condition" required />
+        </div>
+        <div class="form-group">
+          <label for="status">Status</label>
+          <input type="text" class="form-control" id="status" required />
+        </div>
+        <div class="form-group">
+          <label for="seller_id">ID Penjual</label>
+          <input type="number" class="form-control" id="seller_id" required />
+        </div>
+        <button type="submit" class="btn btn-primary">Tambah Produk</button>
+      </form>
+      <div id="responseMessage" class="mt-3"></div>
+    </div>
+
+    <script>
+      document.getElementById("productForm").addEventListener("submit", function (event) {
+        event.preventDefault(); // Mencegah form dari pengiriman default
+
+        // Mengambil data dari form
+        const name = document.getElementById("name").value;
+        const description = document.getElementById("description").value;
+        const price = document.getElementById("price").value;
+        const product_condition = document.getElementById("product_condition").value;
+        const status = document.getElementById("status").value;
+        const seller_id = document.getElementById("seller_id").value;
+
+        // Mengirim data ke server
+        fetch("/products", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name,
+            description,
+            price,
+            product_condition,
+            status,
+            seller_id,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            // Menampilkan pesan respons
+            document.getElementById("responseMessage").innerText = `Produk berhasil ditambahkan: ${data.name}`;
+            // Reset form
+            document.getElementById("productForm").reset();
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            document.getElementById("responseMessage").innerText = "Terjadi kesalahan saat menambahkan produk.";
+          });
+      });
+    </script>
+  </body>
+</html>
